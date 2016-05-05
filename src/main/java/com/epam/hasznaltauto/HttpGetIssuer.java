@@ -3,9 +3,7 @@
  */
 package com.epam.hasznaltauto;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
