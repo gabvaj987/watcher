@@ -4,6 +4,9 @@
 package com.epam.hasznaltauto;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -11,42 +14,41 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
+import com.epam.hasznaltauto.model.Advertisement;
+
 /**
- * @author Gábor
+ * @author Gï¿½bor
  *
  */
 public class HttpGetIssuer {
 	private final String USER_AGENT = "Chrome/50.0.2661.94";
 
-	/**
-	 * @param args
-	 * @throws Exception 
-	 */
-	public static void main(String[] args)  {
-		// TODO Auto-generated method stub
-		HttpGetIssuer httpGetIssuer = new HttpGetIssuer();
-		httpGetIssuer.sendGet();
-	}
-
 	// HTTP GET request
-	private void sendGet() {
-
-		String url = "http://www.google.hu/";
+	public List<Advertisement> sendGet() {
+		List<Advertisement> advertisements = new ArrayList<Advertisement>();
+		String[] urls = { "http://www.google.hu/", "http://www.fakebook.hu/" };
 
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 		try (CloseableHttpClient httpClient = httpClientBuilder.build()) {
-			HttpGet request = new HttpGet(url);
+			for (String url : urls) {
 
-			// add request header
-			request.addHeader("User-Agent", USER_AGENT);
+				HttpGet request = new HttpGet(url);
 
-			HttpResponse response = httpClient.execute(request);
-
-			System.out.println("\nSending 'GET' request to URL : " + url);
-			System.out.println("Response OK : " + (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK));
-
+				// add request header
+				request.addHeader("User-Agent", USER_AGENT);
+				boolean statusOK;
+				try {
+					HttpResponse response = httpClient.execute(request);
+					statusOK = response.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
+				} catch(UnknownHostException uhe) {
+					statusOK = false;
+					uhe.printStackTrace();
+				}
+				advertisements.add(new Advertisement(url, statusOK));
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return advertisements;
 	}
 }
