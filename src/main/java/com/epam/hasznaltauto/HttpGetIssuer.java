@@ -26,11 +26,18 @@ public class HttpGetIssuer {
 	// HTTP GET request
 	public List<Advertisement> sendGet() {
 		List<Advertisement> advertisements = new ArrayList<Advertisement>();
-		String[] urls = { "http://www.google.hu/", "http://www.fakebook.hu/" };
+		String[] urls = {
+
+				"http://www.hasznaltauto.hu/auto/skoda/octavia/skoda_octavia_1.2_tsi_ambiente_magyar_vez.szkonyv-9725682",
+				"http://www.hasznaltauto.hu/auto/skoda/octavia/skoda_octavia_1.2_tsi_clever_maxidot_tempomat_1_tulaj_mo-i-10005193",
+				"http://www.hasznaltauto.hu/auto/skoda/octavia/skoda_octavia_1.4_tsi_elegance_ujszeru_szervizkonyv-10136103",
+				"http://www.hasznaltauto.hu/auto/skoda/octavia/skoda_octavia_1.2_tsi_clever_86.000-km_magyar_1.tulaj-10000221",
+				"http://www.hasznaltauto.hu/auto/skoda/octavia/skoda_octavia_1.4_16v._tour._41098_km-10058319",
+				"http://www.hasznaltauto.hu/auto/skoda/octavia/skoda_octavia_1.4_tsi_elegance_mo-i.szervizkonyv.88.000.km-10058716" };
 
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-		try (CloseableHttpClient httpClient = httpClientBuilder.build()) {
-			for (String url : urls) {
+		for (String url : urls) {
+			try (CloseableHttpClient httpClient = httpClientBuilder.build()) {
 
 				HttpGet request = new HttpGet(url);
 
@@ -40,14 +47,15 @@ public class HttpGetIssuer {
 				try {
 					HttpResponse response = httpClient.execute(request);
 					statusOK = response.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
-				} catch(UnknownHostException uhe) {
+					System.out.println(url);
+				} catch (UnknownHostException uhe) {
 					statusOK = false;
 					uhe.printStackTrace();
 				}
 				advertisements.add(new Advertisement(url, statusOK));
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		return advertisements;
 	}
